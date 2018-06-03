@@ -735,6 +735,12 @@ Py_FinalizeEx(void)
     }
 #endif
 
+    _PyGC_Clear();
+
+#ifdef Py_TRACE_REFS
+    _Py_ResetRefChain();
+#endif
+
     call_ll_exitfuncs();
     return status;
 }

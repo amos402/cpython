@@ -1671,6 +1671,16 @@ _PyGC_Fini(void)
     Py_CLEAR(callbacks);
 }
 
+void
+_PyGC_Clear(void)
+{
+    for (int i = 0; i < NUM_GENERATIONS; ++i) {
+        PyGC_Head *head = GEN_HEAD(i);
+        head->gc.gc_next = head;
+        head->gc.gc_prev = head;
+    }
+}
+
 /* for debugging */
 void
 _PyGC_Dump(PyGC_Head *g)
@@ -1798,3 +1808,22 @@ PyObject_GC_Del(void *op)
     }
     PyObject_FREE(g);
 }
+
+void gc_init_gneration()
+{
+    for (int i = 0; i < NUM_GENERATIONS; i++) {
+        PyGC_Head* head = GEN_HEAD(i);
+        if (head->gc.gc_next != head) {
+            PyGC_Head* dummy_head = head;
+            Py_ssize_t len = 0;
+            do {
+                dummy_head = dummy_head->gc.gc_next;
+                ++len;
+            } while (dummy_head != head);
+            printf("gen[%d]garbage len :%"PY_FORMAT_SIZE_T"d\n", i, len);
+        }
+        //head->gc.gc_next = head;
+        //head->gc.gc_prev = head;
+    }
+}
+
