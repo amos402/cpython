@@ -85,6 +85,13 @@ _Py_AddToAllObjects(PyObject *op, int force)
         refchain._ob_next = op;
     }
 }
+
+void
+_Py_ResetRefChain(void)
+{
+    refchain._ob_next = &refchain;
+    refchain._ob_prev = &refchain;
+}
 #endif  /* Py_TRACE_REFS */
 
 #ifdef COUNT_ALLOCS
